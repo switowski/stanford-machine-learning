@@ -17,9 +17,9 @@ function p = predict(theta, X)
     for i=1:m
         s = sigmoid(theta' * X(i,:)');
         if (s >= 0.5)
-            p(i) = 1
+            p(i) = 1;
         else
-            p(i) = 0
+            p(i) = 0;
         end
     end
     % =========================================================================
