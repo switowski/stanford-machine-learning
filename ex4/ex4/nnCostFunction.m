@@ -83,6 +83,8 @@ for i=1:m
 end
 
 J = (-1/m) * J;
+% Regularize the cost function ommiting
+J += (lambda / (2*m)) * (sum(sumsq(Theta1(:, 2:end)), 2) + sum(sumsq(Theta2(:, 2:end)), 2));
 
 % -------------------------------------------------------------
 
