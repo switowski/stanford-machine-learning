@@ -63,58 +63,92 @@ Theta2_grad = zeros(size(Theta2));
 %               and Theta2_grad from Part 2.
 %
 
+% Old version with the loops
+
 % Forward propagation
-for i=1:m
-    a1 = X(i,:);
-    a1 = [1 a1];  % Add bias unit
-    z2 = Theta1 * a1';
-    a2 = sigmoid(z2);
-    a2 = [1 a2'];  % Add bias unit
-    z3 = Theta2 * a2';
-    a3 = sigmoid(z3);
-    h(i,:) = a3;
-end
+% for i=1:m
+%     a1 = X(i,:);
+%     a1 = [1 a1];  % Add bias unit
+%     z2 = Theta1 * a1';
+%     a2 = sigmoid(z2);
+%     a2 = [1 a2'];  % Add bias unit
+%     z3 = Theta2 * a2';
+%     a3 = sigmoid(z3);
+%     h(i,:) = a3;
+% end
+% Cost function
+% for i=1:m
+%     for k=1:num_labels
+%         J += (y(i) == k) * log(h(i,k)) + (1 - (y(i) == k)) * log(1-h(i,k));
+%     end
+% end
+
+% Backpropagation
+% DELTA_1 = zeros(size(Theta1));
+% DELTA_2 = zeros(size(Theta2));
+% for i=1:m
+%     % STEP 1
+%     % First, forward propagation
+%     a1 = X(i,:);
+%     a1 = [1 a1];  % Add bias unit
+%     z2 = Theta1 * a1';
+%     a2 = sigmoid(z2);
+%     a2 = [1 a2'];  % Add bias unit
+%     z3 = Theta2 * a2';
+%     a3 = sigmoid(z3);
+%     h(i,:) = a3;
+%     % And the backpropagation
+%     % STEP 2
+%     for k=1:num_labels
+%         delta3(k) = a3(k) - (y(i) == k);
+%     end
+%     % STEP 3
+%     % This formula has incorrect dimension of the sigmoid, so let's use the other one
+%     % delta2 = Theta2' * delta3' .* sigmoidGradient(z2);
+%     delta2 = Theta2' * delta3' .* (a2 .* (1-a2))';
+%     % STEP 4
+%     DELTA_1 += delta2(2:end) * a1;
+%     DELTA_2 += delta3' * a2;
+% end
+
+% Theta1_grad = 1/m .* DELTA_1;
+% Theta2_grad = 1/m .* DELTA_2;
+% % Normalize gradient
+% Theta1_grad(:,2:end) .+= lambda/m * Theta1(:,2:end);
+% Theta2_grad(:,2:end) .+= lambda/m * Theta2(:,2:end);
+
+
+% New vectorized version
+
+% Forward propagation
+% Add bias unit
+a1 = [ones(size(X, 1), 1) X];
+z2 = a1 * Theta1';
+a2 = sigmoid(z2);
+% Add bias unit
+a2 = [ones(size(a2, 1), 1) a2];
+z3 = a2 * Theta2';
+a3 = sigmoid(z3);
+h = a3;
+
+% Transform y into a matrix of zeros and ones
+y_matrix = eye(num_labels)(y,:);
 
 % Cost function
-for i=1:m
-    for k=1:num_labels
-        J += (y(i) == k) * log(h(i,k)) + (1 - (y(i) == k)) * log(1-h(i,k));
-    end
-end
+J = (-1/m) * sum(sum(y_matrix .* log(h) + ((1 - y_matrix) .* log(1-h)), 1),2);
 
-J = (-1/m) * J;
-% Regularize the cost function ommiting
+% Regularized cost function
 J += (lambda / (2*m)) * (sum(sumsq(Theta1(:, 2:end)), 2) + sum(sumsq(Theta2(:, 2:end)), 2));
-
-% -------------------------------------------------------------
 
 % Backpropagation
 DELTA_1 = zeros(size(Theta1));
 DELTA_2 = zeros(size(Theta2));
-for i=1:m
-    % STEP 1
-    % First, forward propagation
-    a1 = X(i,:);
-    a1 = [1 a1];  % Add bias unit
-    z2 = Theta1 * a1';
-    a2 = sigmoid(z2);
-    a2 = [1 a2'];  % Add bias unit
-    z3 = Theta2 * a2';
-    a3 = sigmoid(z3);
-    h(i,:) = a3;
-    % And the backpropagation
-    % STEP 2
-    for k=1:num_labels
-        delta3(k) = a3(k) - (y(i) == k);
-    end
-    % STEP 3
-    % This formula has incorrect dimension of the sigmoid, so let's use the other one
-    % delta2 = Theta2' * delta3' .* sigmoidGradient(z2);
-    delta2 = Theta2' * delta3' .* (a2 .* (1-a2))';
-    % STEP 4
-    DELTA_1 += delta2(2:end) * a1;
-    DELTA_2 += delta3' * a2;
-end
+
+delta3 = a3 - y_matrix;
+% Ignore Theta2 bias unit here
+delta2 = delta3 * Theta2(:,2:end) .* (a2(:, 2:end) .* (1-a2(:, 2:end)));
+DELTA_2 += delta3' * a2;
+DELTA_1 += delta2' * a1;
 
 Theta1_grad = 1/m .* DELTA_1;
 Theta2_grad = 1/m .* DELTA_2;

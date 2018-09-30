@@ -91,7 +91,7 @@ nn_params = [Theta1(:) ; Theta2(:)];
 % fprintf('\nChecking Cost Function (w/ Regularization) ... \n')
 
 % % Weight regularization parameter (we set this to 1 here).
-lambda = 1;
+% lambda = 1;
 
 % J = nnCostFunction(nn_params, input_layer_size, hidden_layer_size, ...
 %                    num_labels, X, y, lambda);
@@ -187,7 +187,7 @@ fprintf('\nTraining Neural Network... \n')
 
 %  After you have completed the assignment, change the MaxIter to a larger
 %  value to see how more training helps.
-options = optimset('MaxIter', 50);
+options = optimset('MaxIter', 200);
 
 %  You should also try different values of lambda
 lambda = 1;
@@ -209,8 +209,8 @@ Theta1 = reshape(nn_params(1:hidden_layer_size * (input_layer_size + 1)), ...
 Theta2 = reshape(nn_params((1 + (hidden_layer_size * (input_layer_size + 1))):end), ...
                  num_labels, (hidden_layer_size + 1));
 
-fprintf('Program paused. Press enter to continue.\n');
-pause;
+% fprintf('Program paused. Press enter to continue.\n');
+% pause;
 
 
 %% ================= Part 9: Visualize Weights =================
