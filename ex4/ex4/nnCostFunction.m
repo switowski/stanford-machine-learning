@@ -88,6 +88,37 @@ J += (lambda / (2*m)) * (sum(sumsq(Theta1(:, 2:end)), 2) + sum(sumsq(Theta2(:, 2
 
 % -------------------------------------------------------------
 
+% Backpropagation
+DELTA_1 = zeros(size(Theta1));
+DELTA_2 = zeros(size(Theta2));
+for i=1:m
+    % STEP 1
+    % First, forward propagation
+    a1 = X(i,:);
+    a1 = [1 a1];  % Add bias unit
+    z2 = Theta1 * a1';
+    a2 = sigmoid(z2);
+    a2 = [1 a2'];  % Add bias unit
+    z3 = Theta2 * a2';
+    a3 = sigmoid(z3);
+    h(i,:) = a3;
+    % And the backpropagation
+    % STEP 2
+    for k=1:num_labels
+        delta3(k) = a3(k) - (y(i) == k);
+    end
+    % STEP 3
+    % This formula has incorrect dimension of the sigmoid, so let's use the other one
+    % delta2 = Theta2' * delta3' .* sigmoidGradient(z2);
+    delta2 = Theta2' * delta3' .* (a2 .* (1-a2))';
+    % STEP 4
+    DELTA_1 += delta2(2:end) * a1;
+    DELTA_2 += delta3' * a2;
+end
+
+Theta1_grad = 1/m .* DELTA_1;
+Theta2_grad = 1/m .* DELTA_2;
+
 % =========================================================================
 
 % Unroll gradients
