@@ -25,7 +25,7 @@ clear ; close all; clc
 %
 
 % Load Training Data
-fprintf('Loading and Visualizing Data ...\n')
+% fprintf('Loading and Visualizing Data ...\n')
 
 % Load from ex5data1:
 % You will have X, y, Xval, yval, Xtest, ytest in your environment
@@ -201,22 +201,64 @@ X_poly_val = [ones(size(X_poly_val, 1), 1), X_poly_val];           % Add Ones
 %  "best" lambda value.
 %
 
-[lambda_vec, error_train, error_val] = ...
-    validationCurve(X_poly, y, X_poly_val, yval);
+% [lambda_vec, error_train, error_val] = ...
+%     validationCurve(X_poly, y, X_poly_val, yval);
 
-close all;
-plot(lambda_vec, error_train, lambda_vec, error_val);
-legend('Train', 'Cross Validation');
-xlabel('lambda');
-ylabel('Error');
+% close all;
+% plot(lambda_vec, error_train, lambda_vec, error_val);
+% legend('Train', 'Cross Validation');
+% xlabel('lambda');
+% ylabel('Error');
 
-fprintf('lambda\t\tTrain Error\tValidation Error\n');
-for i = 1:length(lambda_vec)
-	fprintf(' %f\t%f\t%f\n', ...
-            lambda_vec(i), error_train(i), error_val(i));
-end
+% fprintf('lambda\t\tTrain Error\tValidation Error\n');
+% for i = 1:length(lambda_vec)
+% 	fprintf(' %f\t%f\t%f\n', ...
+%             lambda_vec(i), error_train(i), error_val(i));
+% end
 
 % fprintf('Program paused. Press enter to continue.\n');
 % pause;
 
+% 3.4 Compute test error for the best lambda
+lambda = 3;
+mtest = size(X_poly_test, 1);
+theta = trainLinearReg([ones(m, 1) X_poly], y, lambda);
+Jtest = linearRegCostFunction([ones(mtest, 1) X_poly_test], ytest, theta, 0)
 
+% 3.5 Randomly selected examples
+m_poly = size(X_poly, 1);
+m_val = size(X_poly_val, 1);
+error_train = zeros(m_poly, 1);
+error_val   = zeros(m_poly, 1);
+repeat_number = 50;
+lambda = 0.01;
+
+for i=1:m_poly
+    sum_train_error = 0;
+    sum_val_error = 0;
+
+    for j=1:repeat_number
+        rndIDX = randperm(m_poly);
+
+        X_poly_rand = X_poly(rndIDX(1:i), :);
+        y_rand = y(rndIDX(1:i), :);
+        X_poly_val_rand = X_poly_val(rndIDX(1:i), :);
+        yval_rand = yval(rndIDX(1:i), :);
+
+        theta = trainLinearReg([ones(size(X_poly_rand, 1), 1) X_poly_rand], y_rand, lambda);
+        sum_train_error += linearRegCostFunction([ones(size(X_poly_rand, 1), 1) X_poly_rand], y_rand, theta, 0);
+        sum_val_error += linearRegCostFunction([ones(size(X_poly_val_rand, 1), 1) X_poly_val_rand], yval_rand, theta, 0);
+    end
+
+    error_train(i) = sum_train_error / repeat_number;
+    error_val(i) = sum_val_error / repeat_number;
+end
+
+
+plot(1:m_poly, error_train, 1:m_poly, error_val);
+
+title(sprintf('Polynomial Regression Learning Curve (lambda = %f)', lambda));
+xlabel('Number of training examples')
+ylabel('Error')
+axis([0 13 0 100])
+legend('Train', 'Cross Validation')
