@@ -26,16 +26,8 @@ centroids = zeros(K, n);
 % Note: You can use a for-loop over the centroids to compute this.
 %
 for i = 1:K
-    number_of_points = 0;
-    sum_of_points = zeros(1, n);
-    for j = 1:m
-        if idx(j, 1) == i
-        # This point belongs to the current centroid
-            number_of_points += 1;
-            sum_of_points += X(j, :);
-        end
-    end
-    centroids(i,:) = 1 / number_of_points * sum_of_points;
+    logic_idx = idx == i;
+    centroids(i, :) = 1/sum(logic_idx) * sum(X .* logic_idx);
 end
 
 
