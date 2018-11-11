@@ -33,11 +33,11 @@ clear ; close all; clc
 %  variables X, Xval, yval in your environment
 load('ex8data1.mat');
 
-% %  Visualize the example dataset
-% plot(X(:, 1), X(:, 2), 'bx');
-% axis([0 30 0 30]);
-% xlabel('Latency (ms)');
-% ylabel('Throughput (mb/s)');
+%  Visualize the example dataset
+plot(X(:, 1), X(:, 2), 'bx');
+axis([0 30 0 30]);
+xlabel('Latency (ms)');
+ylabel('Throughput (mb/s)');
 
 % fprintf('Program paused. Press enter to continue.\n');
 % pause
@@ -51,7 +51,7 @@ load('ex8data1.mat');
 %  both the overall distribution and where each of the points falls in
 %  terms of that distribution.
 %
-fprintf('Visualizing Gaussian fit.\n\n');
+% fprintf('Visualizing Gaussian fit.\n\n');
 
 %  Estimate my and sigma2
 [mu sigma2] = estimateGaussian(X);
@@ -65,8 +65,8 @@ visualizeFit(X,  mu, sigma2);
 xlabel('Latency (ms)');
 ylabel('Throughput (mb/s)');
 
-fprintf('Program paused. Press enter to continue.\n');
-pause;
+% fprintf('Program paused. Press enter to continue.\n');
+% pause;
 
 %% ================== Part 3: Find Outliers ===================
 %  Now you will find a good epsilon threshold using a cross-validation set
