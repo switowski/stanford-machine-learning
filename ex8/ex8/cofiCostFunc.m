@@ -44,6 +44,25 @@ Theta_grad = zeros(size(Theta));
 % "X * Theta'" is the same as above but with movies as rows and users as columns
 J = 0.5 * sum(sum(R .* (X * Theta' .- Y).^2));
 
+for k=1:num_features
+    for i=1:num_movies
+        sum_j = 0;
+        for j=1:num_users
+            sum_j += R(i,j) * (Theta(j,:) * X(i,:)' - Y(i,j)) * Theta(j, k);
+        end
+        X_grad(i, k) = sum_j;
+    end
+end
+
+for k=1:num_features
+    for j=1:num_users
+        sum_i = 0;
+        for i=1:num_movies
+            sum_i += R(i,j) * (Theta(j,:) * X(i,:)' - Y(i,j)) * X(i, k);
+        end
+        Theta_grad(j, k) = sum_i;
+    end
+end
 
 % =============================================================
 
