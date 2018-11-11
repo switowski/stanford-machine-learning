@@ -58,12 +58,12 @@ Theta = Theta(1:num_users, 1:num_features);
 Y = Y(1:num_movies, 1:num_users);
 R = R(1:num_movies, 1:num_users);
 
-%  Evaluate cost function
-J = cofiCostFunc([X(:) ; Theta(:)], Y, R, num_users, num_movies, ...
-               num_features, 0);
+% %  Evaluate cost function
+% J = cofiCostFunc([X(:) ; Theta(:)], Y, R, num_users, num_movies, ...
+%                num_features, 0);
 
-fprintf(['Cost at loaded parameters: %f '...
-         '\n(this value should be about 22.22)\n'], J);
+% fprintf(['Cost at loaded parameters: %f '...
+%          '\n(this value should be about 22.22)\n'], J);
 
 % fprintf('\nProgram paused. Press enter to continue.\n');
 % pause;
@@ -74,13 +74,13 @@ fprintf(['Cost at loaded parameters: %f '...
 %  the collaborative filtering gradient function. Specifically, you should
 %  complete the code in cofiCostFunc.m to return the grad argument.
 %
-fprintf('\nChecking Gradients (without regularization) ... \n');
+% fprintf('\nChecking Gradients (without regularization) ... \n');
 
-%  Check gradients by running checkNNGradients
-checkCostFunction;
+% %  Check gradients by running checkNNGradients
+% checkCostFunction;
 
-fprintf('\nProgram paused. Press enter to continue.\n');
-pause;
+% fprintf('\nProgram paused. Press enter to continue.\n');
+% pause;
 
 
 %% ========= Part 4: Collaborative Filtering Cost Regularization ========

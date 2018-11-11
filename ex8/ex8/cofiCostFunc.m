@@ -42,26 +42,53 @@ Theta_grad = zeros(size(Theta));
 
 % "Theta * X'" will give us prediction of how much a given user will like a movie
 % "X * Theta'" is the same as above but with movies as rows and users as columns
-J = 0.5 * sum(sum(R .* (X * Theta' .- Y).^2));
 
-for k=1:num_features
-    for i=1:num_movies
-        sum_j = 0;
-        for j=1:num_users
-            sum_j += R(i,j) * (Theta(j,:) * X(i,:)' - Y(i,j)) * Theta(j, k);
-        end
-        X_grad(i, k) = sum_j;
-    end
+
+% Unregularized
+
+
+% J = 0.5 * sum(sum(R .* (X * Theta' .- Y).^2));
+
+% for i=1:num_movies
+%     % idx - list of users that rated this movie
+%     idx = find(R(i, :) == 1);
+%     Theta_temp = Theta(idx, :);
+%     Y_temp = Y(i, idx);
+%     X_grad(i, :) = (X(i, :) * Theta_temp' - Y_temp) * Theta_temp;
+% end
+
+% for j=1:num_users
+%     % idx - list of movies that this user has rated
+%     idx = find(R(:, j) == 1);
+%     X_temp = X(idx, :);
+%     Y_temp = Y(idx, j);
+%     Theta_grad(j, :) = (X_temp * Theta(j, :)' - Y_temp)' * X_temp;
+% end
+
+
+% Regularized
+
+
+J = 0.5 * sum(sum(R .* (X * Theta' .- Y).^2)) + ...
+    0.5 * lambda * sum(sum(Theta .^ 2)) + ...
+    0.5 * lambda * sum(sum(X .^ 2));
+
+for i=1:num_movies
+    % idx - list of users that rated this movie
+    idx = find(R(i, :) == 1);
+    Theta_temp = Theta(idx, :);
+    Y_temp = Y(i, idx);
+    X_grad(i, :) = (X(i, :) * Theta_temp' - Y_temp) * Theta_temp + ...
+                   lambda * X(i, :);
 end
 
-for k=1:num_features
-    for j=1:num_users
-        sum_i = 0;
-        for i=1:num_movies
-            sum_i += R(i,j) * (Theta(j,:) * X(i,:)' - Y(i,j)) * X(i, k);
-        end
-        Theta_grad(j, k) = sum_i;
-    end
+for j=1:num_users
+    % idx - list of movies that this user has rated
+    idx = find(R(:, j) == 1);
+    X_temp = X(idx, :);
+    Y_temp = Y(idx, j);
+    Theta_grad(j, :) = (X_temp * Theta(j, :)' - Y_temp)' * X_temp + ...
+                       lambda * Theta(j, :);
 end
 
 % =============================================================
